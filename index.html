@@ -5,17 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TimeTrek: Customizable Countdown Timer</title>
     <link rel="stylesheet" href="style.css">
-<head>
+</head>
 <body>
     <div class="container">
         <h1>TimeTrek Countdown Timer</h1>
         <p>Enter your target date and time:</p>
-        <input type="datetime-local" id="targetDateTime">
+        <label for="targetDateTime">Enter your event date and time:</label>
+        <input type="datetime-local" id="targetDateTime" placeholder="dd/mm/yyyy --:--">
+        <span id="dateHelp" class="form-text">Format: dd/mm/yyyy hh:mm</span>
         <button id="startButton">Start Countdown</button>
         <h2 id="countdownDisplay">00d 00h 00m 00s</h2>
     </div>
 
     <script src="script.js"></script>
 </body>
-
 </html>
