@@ -17,7 +17,7 @@ To embark on your TimeTrek journey:
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/[Universe8888]/TimeTrek-Customizable-Countdown-Time.git
+   git clone https://github.com/Universe8888/TimeTrek-Customizable-Countdown-Time.git
    ```
 2. **Open and Set**
    - Launch `index.html` in your browser.
