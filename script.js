@@ -1,40 +1,60 @@
 const startButton = document.getElementById('startButton');
+const pauseButton = document.getElementById('pauseButton');
+const resumeButton = document.getElementById('resumeButton');
 const targetDateTime = document.getElementById('targetDateTime');
 const countdownDisplay = document.getElementById('countdownDisplay');
 
-startButton.addEventListener('click', function() {
-    // Replace the input format to ISO standard for better compatibility
-    const targetValue = targetDateTime.value.replace(/ /g, 'T');
-    const targetDate = new Date(targetValue);
+let interval;
+let timeRemaining; // To keep track of the time remaining when paused
 
-    // Check if the date is valid
-    if (isNaN(targetDate)) {
-        alert("Please enter the date and time in the correct format (YYYY-MM-DDTHH:MM) and ensure it is a future date.");
-        return; // Exit the function if the date is not valid
-    }
+function startTimer(duration) {
+    const end = Date.now() + duration;
+    if (interval) clearInterval(interval); // Clear any existing intervals
 
-    // Check if the date is in the future
-    if (targetDate <= new Date()) {
-        alert("Please enter a future date and time.");
-        return; // Exit the function if the date is not in the future
-    }
-
-    const interval = setInterval(function() {
-        const now = new Date().getTime();
-        const distance = targetDate - now;
-
-        const { days, hours, minutes, seconds } = {
-            days: Math.floor(distance / (1000 * 60 * 60 * 24)),
-            hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-            minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
-            seconds: Math.floor((distance % (1000 * 60)) / 1000)
-        };
-
-        countdownDisplay.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-
-        if (distance < 0) {
+    interval = setInterval(function() {
+        timeRemaining = end - Date.now();
+        if (timeRemaining <= 0) {
             clearInterval(interval);
             countdownDisplay.innerHTML = "Time's Up!";
+            pauseButton.disabled = true;
+            resumeButton.disabled = true;
+            return;
         }
+
+        const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+        // Update the countdown display
+        countdownDisplay.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
     }, 1000);
+}
+
+startButton.addEventListener('click', function() {
+    const targetDate = new Date(targetDateTime.value).getTime();
+    const now = new Date().getTime();
+    const duration = targetDate - now;
+
+    if (duration <= 0) {
+        alert("Please enter a future date and time.");
+        return;
+    }
+
+    timeRemaining = duration;
+    startTimer(timeRemaining);
+    this.disabled = true; // Disable start button
+    pauseButton.disabled = false; // Enable pause button
+});
+
+pauseButton.addEventListener('click', function() {
+    if (interval) clearInterval(interval); // Pause the countdown
+    this.disabled = true; // Disable pause button
+    resumeButton.disabled = false; // Enable resume button
+});
+
+resumeButton.addEventListener('click', function() {
+    startTimer(timeRemaining); // Resume the countdown with the remaining time
+    this.disabled = true; // Disable resume button
+    pauseButton.disabled = false; // Enable pause button
 });
